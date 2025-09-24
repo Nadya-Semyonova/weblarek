@@ -10,8 +10,8 @@ export class Buyer {
 
   // Методы
   getBuyerData(): IBuyer | null {
-    if (!this.isValid()) {
-      return null;
+    if (!this.email && !this.phone) {
+      return null; 
     }
 
     return {
@@ -44,12 +44,28 @@ export class Buyer {
     this.email = "";
   }
 
-  isValid(): boolean {
-    return (
-      this.payment !== "" &&
-      this.address.trim() !== "" &&
-      this.phone.trim() !== "" &&
-      this.email.trim() !== ""
-    );
-  }
+  validate(): { isValid: boolean; errors: string[] } {
+    const errors: string[] = [];
+
+    if (!this.payment) {
+        errors.push('Способ оплаты не выбран');
+    }
+
+    if (!this.address.trim()) {
+        errors.push('Адрес не указан');
+    }
+
+    if (!this.phone.trim()) {
+        errors.push('Телефон не указан');
+    } 
+
+    if (!this.email.trim()) {
+        errors.push('Email не указан');
+    } 
+
+    return {
+        isValid: errors.length === 0,
+        errors,
+    };
+}
 }
