@@ -1,5 +1,6 @@
 import { IBuyer } from "../../types/index";
 import { TPayment } from "../../types/index";
+import { IValidationResult,IValidationErrors } from "../../types/index";
 
 export class Buyer {
   // Поля класса
@@ -44,28 +45,29 @@ export class Buyer {
     this.email = "";
   }
 
-  validate(): { isValid: boolean; errors: string[] } {
-    const errors: string[] = [];
 
-    if (!this.payment) {
-        errors.push('Способ оплаты не выбран');
-    }
+validate(): IValidationResult {
+  const errors: IValidationErrors = {};
 
-    if (!this.address.trim()) {
-        errors.push('Адрес не указан');
-    }
+  if (!this.payment) {
+    errors.payment = 'Способ оплаты не выбран';
+  }
+  
+  if (!this.phone || !this.phone.trim()) {
+    errors.phone = 'Телефон не указан';
+  }
 
-    if (!this.phone.trim()) {
-        errors.push('Телефон не указан');
-    } 
+  if (!this.email || !this.email.trim()) {
+    errors.email = 'Email не указан';
+  }
 
-    if (!this.email.trim()) {
-        errors.push('Email не указан');
-    } 
+  if (!this.address || !this.address.trim()) {
+    errors.address = 'Адрес не указан';
+  }
 
-    return {
-        isValid: errors.length === 0,
-        errors,
-    };
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors,
+  };
 }
 }

@@ -41,3 +41,16 @@ export interface IOrderResponse {
   id: string;
   total: number;
 }
+
+
+export interface IValidationErrors {
+   payment?: string;
+   address?: string;
+   phone?: string;
+   email?: string;
+ }
+
+ export interface IValidationResult {
+   isValid: boolean;
+   errors: IValidationErrors;
+}

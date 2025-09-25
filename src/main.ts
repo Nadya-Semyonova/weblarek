@@ -90,7 +90,7 @@ console.log("Данные покупателя:", buyerData);
 
 // Тест 3: Валидация данных
 
-const isValid = buyerModel.isValid();
+const isValid = buyerModel.validate();
 console.log("Данные валидны:", isValid);
 
 // Тест 4: Тестирование с неполными данными
@@ -101,7 +101,7 @@ incompleteBuyer.setBuyerData({
   email: "test@test.ru",
   // address и phone не заполнены
 });
-console.log("Данные валидны:", incompleteBuyer.isValid());
+console.log("Данные валидны:", incompleteBuyer.validate());
 console.log("Данные покупателя:", incompleteBuyer.getBuyerData()); // Должен вернуть null
 
 // Тест 5: Очистка данных
