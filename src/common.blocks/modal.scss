@@ -22,15 +22,18 @@
     @include mixins.flex(column);
     gap: $defaultPadding;
     background-color: $background;
-    // min-height: 90vmin;
+    max-height: 90vh;
     border-radius: 3rem;
     box-sizing: border-box;
     position: relative;
+    overflow: hidden; 
   }
 
   &__content {
     flex-grow: 1;
+    overflow-y: auto;
   }
+
 
   &__title {
     margin: 0;
