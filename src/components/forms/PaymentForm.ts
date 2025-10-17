@@ -13,7 +13,7 @@ export class PaymentForm extends Form<TPayment> {
         this._paymentButtons = Array.from(container.querySelectorAll('.button_alt')); 
         this._addressInput = container.querySelector('input[name="address"]') as HTMLInputElement; 
  
-        // ✅ Только события, без изменения состояния
+       
         this._paymentButtons.forEach(button => { 
             button.addEventListener('click', () => { 
                 this.events.emit('payment:changed', { 
@@ -28,15 +28,15 @@ export class PaymentForm extends Form<TPayment> {
             }); 
         }); 
          
-        // ✅ Убрана лишняя логика, только событие отправки
+        
         this.container.addEventListener('submit', (event) => { 
             event.preventDefault(); 
             this.events.emit('paymentForm:submit'); 
         }); 
     } 
  
-    // ✅ Только отображение данных, полученных из презентера
-    set payment(value: 'card' | 'cash' | null) { 
+    
+    set payment(value: 'card' | 'cash' | "") { 
         this._paymentButtons.forEach(button => { 
             const isActive = button.name === value;
             button.classList.toggle('button_alt-active', isActive); 
@@ -47,12 +47,12 @@ export class PaymentForm extends Form<TPayment> {
         this._addressInput.value = value; 
     } 
  
-    // ✅ Убрана валидация - только отображение состояния
+   
     set valid(value: boolean) {
         this._valid = value;
         this.updateButtonState();
         
-        // Визуальная индикация ошибок (только отображение)
+        // Визуальная индикация ошибок 
         this._addressInput.classList.toggle('form__input-error', !value);
         this._paymentButtons.forEach(button => { 
             button.classList.toggle('button_alt-error', !value); 
@@ -66,12 +66,12 @@ export class PaymentForm extends Form<TPayment> {
         } 
     } 
  
-    // ✅ Убраны абстрактные методы - форма не валидирует
+   
     protected validate(): boolean { 
-        return this._valid; // Просто возвращаем текущее состояние
+        return this._valid; 
     } 
  
     protected onInputChange(): void { 
-        // Пустая реализация - валидация в презентере
+        
     } 
 }

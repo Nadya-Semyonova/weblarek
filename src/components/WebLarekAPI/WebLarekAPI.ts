@@ -8,7 +8,6 @@ export class WebLarekAPI {
     this.api = api;
   }
 
-  // GET /product - возвращает IProduct[] через IProductListResponse
   async getProductList(): Promise<IProduct[]> {
     try {
       const response = await this.api.get<{ items: IProduct[] }>("/product");

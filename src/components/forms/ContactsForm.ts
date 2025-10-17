@@ -12,7 +12,7 @@ export class ContactsForm extends Form<IBuyer> {
         this._emailInput = container.querySelector('input[name="email"]') as HTMLInputElement;
         this._phoneInput = container.querySelector('input[name="phone"]') as HTMLInputElement;
         
-        // ✅ ТОЛЬКО СОБЫТИЯ
+    
         this._emailInput.addEventListener('input', () => {
             this.events.emit('contacts:change', { 
                 field: 'email', 
@@ -27,14 +27,14 @@ export class ContactsForm extends Form<IBuyer> {
             });
         });
 
-        // ✅ БЕЗ ПРОВЕРКИ VALID
+       
         this.container.addEventListener('submit', (event) => {
             event.preventDefault();
             this.events.emit('ContactsForm:submit');
         });
     }
 
-    // ✅ ТОЛЬКО ОТОБРАЖЕНИЕ ДАННЫХ
+    
     set email(value: string) {
         this._emailInput.value = value;
     }
@@ -43,21 +43,21 @@ export class ContactsForm extends Form<IBuyer> {
         this._phoneInput.value = value;
     }
 
-    // ✅ УПРОЩЕННАЯ ВАЛИДАЦИЯ (ТОЛЬКО ОТОБРАЖЕНИЕ)
+   
     validate(): boolean {
         return this._valid;
     }
 
     protected onInputChange(): void {
-        // Пустая реализация
+        
     }
 
-    // ✅ ОТОБРАЖЕНИЕ ОШИБОК И СОСТОЯНИЯ
+    
     set valid(value: boolean) {
         this._valid = value;
         this.updateButtonState();
         
-        // Визуальная индикация ошибок (только отображение)
+        // Визуальная индикация ошибок 
         this._emailInput.classList.toggle('form__input-error', !value);
         this._phoneInput.classList.toggle('form__input-error', !value);
     }

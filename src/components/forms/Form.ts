@@ -49,6 +49,6 @@ export abstract class Form<T> extends Component<T> {
     }
     
     protected onInputChange(): void {
-        // Базовая реализация
+        
     }
 }

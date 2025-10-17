@@ -1,8 +1,6 @@
 import { Component } from '../base/Component';
 
 
-
-// Определяем интерфейс для данных карточки, посмотреть еще раз видео про этот момент!!!!!!!!!
 interface ICardData {
     title: string;
     price: number | null;

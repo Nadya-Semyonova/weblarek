@@ -1,7 +1,7 @@
 import { IBuyer } from "../../types/index"; 
 import { TPayment } from "../../types/index"; 
 import { IValidationResult, IValidationErrors } from "../../types/index"; 
-import { IEvents } from "../base/Events"; // Добавляем импорт событий
+import { IEvents } from "../base/Events"; 
 
 export class Buyer { 
   // Поля класса 
@@ -10,9 +10,9 @@ export class Buyer {
   private phone: string = ""; 
   private email: string = ""; 
 
-  constructor(private events: IEvents) {} // Добавляем events в конструктор
+  constructor(private events: IEvents) {} 
 
-  // ✅ ВСЕГДА возвращает текущие данные без ограничений
+  
   getBuyerData(): IBuyer { 
     return { 
       payment: this.payment as TPayment, 
@@ -22,7 +22,7 @@ export class Buyer {
     }; 
   } 
 
-  // ✅ Модель сама генерирует события при изменении данных
+  
   setBuyerData(buyerData: Partial<IBuyer>): void { 
     let changed = false;
 
@@ -50,13 +50,13 @@ export class Buyer {
       this.events.emit('buyer:emailChanged', { email: this.email });
     } 
 
-    // Генерируем общее событие о изменении данных
+   
     if (changed) {
       this.events.emit('buyer:changed', this.getBuyerData());
     }
   } 
 
-  // ✅ Также генерируем событие при очистке данных
+ 
   clearData(): void { 
     this.payment = ""; 
     this.address = ""; 
