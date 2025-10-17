@@ -5,85 +5,67 @@ import { IBuyer } from '../../types';
 export class ContactsForm extends Form<IBuyer> {
     protected _emailInput: HTMLInputElement;
     protected _phoneInput: HTMLInputElement;
-    
-    public currentEmail: string = '';
-    public currentPhone: string = '';
-    
 
     constructor(container: HTMLFormElement, events: IEvents) {
         super(container, events);
         
         this._emailInput = container.querySelector('input[name="email"]') as HTMLInputElement;
         this._phoneInput = container.querySelector('input[name="phone"]') as HTMLInputElement;
+        
+        // ✅ ТОЛЬКО СОБЫТИЯ
         this._emailInput.addEventListener('input', () => {
-            this.email = this._emailInput.value;
-            this.events.emit('contacts:change', { field: 'email', value: this._emailInput.value });
+            this.events.emit('contacts:change', { 
+                field: 'email', 
+                value: this._emailInput.value 
+            });
         });
 
         this._phoneInput.addEventListener('input', () => {
-            this.phone = this._phoneInput.value;
-            this.events.emit('contacts:change', { field: 'phone', value: this._phoneInput.value });
+            this.events.emit('contacts:change', { 
+                field: 'phone', 
+                value: this._phoneInput.value 
+            });
         });
 
-        // Добавляем обработчик отправки формы
+        // ✅ БЕЗ ПРОВЕРКИ VALID
         this.container.addEventListener('submit', (event) => {
             event.preventDefault();
-            console.log('Форма контактов отправлена, valid:', this.valid);
-            if (this.valid) {
-                this.events.emit('ContactsForm:submit');
-            }
+            this.events.emit('ContactsForm:submit');
         });
-
-        this.onInputChange();
     }
 
-    // Метод для инициализации после вставки в DOM
-    initForm(): void {
-        this.initFormElements();
-        this.onInputChange(); 
-    }
-
+    // ✅ ТОЛЬКО ОТОБРАЖЕНИЕ ДАННЫХ
     set email(value: string) {
-        this.currentEmail = value.trim();
-        this._emailInput.value = this.currentEmail;
-        this.onInputChange();
+        this._emailInput.value = value;
     }
 
     set phone(value: string) {
-        this.currentPhone = value.trim();
-        this._phoneInput.value = this.currentPhone;
-        this.onInputChange();
+        this._phoneInput.value = value;
     }
 
-    protected onInputChange() {
-        this.validate();
-        this.updateButtonState(); 
-    }
-
+    // ✅ УПРОЩЕННАЯ ВАЛИДАЦИЯ (ТОЛЬКО ОТОБРАЖЕНИЕ)
     validate(): boolean {
-        const isEmailValid = this.currentEmail.trim().length > 0 && this.isValidEmail(this.currentEmail);
-        const isPhoneValid = this.currentPhone.trim().length > 0;
-
-        // Визуальная индикация ошибок
-        this._emailInput.classList.toggle('form__input-error', !isEmailValid && this.currentEmail !== '');
-        this._phoneInput.classList.toggle('form__input-error', !isPhoneValid && this.currentPhone !== '');
-
-        const errors: string[] = [];
-        if (!isEmailValid) {
-            errors.push('Введите корректный email');
-        }
-        if (!isPhoneValid) {
-            errors.push('Введите номер телефона');
-        }
-
-        this.errors = errors.join(', ');
-        this.valid = isEmailValid && isPhoneValid;
-
-        return this.valid;
+        return this._valid;
     }
 
-    private isValidEmail(email: string): boolean {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
+    protected onInputChange(): void {
+        // Пустая реализация
+    }
+
+    // ✅ ОТОБРАЖЕНИЕ ОШИБОК И СОСТОЯНИЯ
+    set valid(value: boolean) {
+        this._valid = value;
+        this.updateButtonState();
+        
+        // Визуальная индикация ошибок (только отображение)
+        this._emailInput.classList.toggle('form__input-error', !value);
+        this._phoneInput.classList.toggle('form__input-error', !value);
+    }
+
+    set errors(value: string) {
+        if (this._errors) {
+            this._errors.textContent = value;
+            this._errors.style.display = value ? 'block' : 'none';
+        }
     }
 }

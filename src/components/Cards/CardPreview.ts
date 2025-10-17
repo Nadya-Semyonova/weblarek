@@ -1,6 +1,7 @@
 import { Card } from "./Card";
 import { IEvents } from "../base/Events";
 import { ensureElement } from '../../utils/utils';
+import { categoryMap } from '../../utils/constants';
 
 
 export class CardPreview extends Card {
@@ -9,13 +10,17 @@ export class CardPreview extends Card {
     private _id: string = ''; 
     private _productPrice: number | null = null;
     _inCart: boolean = false;
+    protected _image: HTMLImageElement;
+    protected _category: HTMLElement;
+
 
     constructor(container: HTMLElement, protected events: IEvents) {
         super(container);
         
         this._description = ensureElement<HTMLElement>('.card__text', container);
         this._button = ensureElement<HTMLButtonElement>('.card__button', container);
-        
+        this._image = this.container.querySelector('.card__image') as HTMLImageElement;
+        this._category = this.container.querySelector('.card__category') as HTMLElement;
         this._button.addEventListener('click', (event) => {
             event.stopPropagation();
 
@@ -29,7 +34,15 @@ export class CardPreview extends Card {
             this.events.emit('card:close');
         });
     }
-
+     set image(value: string) {
+        this.setImage(this._image, value, this._title?.textContent || '');
+    }
+    
+    set category(value: string) {
+        this.setText(this._category, value);
+        const cssClass = categoryMap[value as keyof typeof categoryMap] || 'card__category_other';
+        this._category.className = `card__category ${cssClass}`;
+    }
     set id(value: string) {
         this._id = value;
     }
@@ -56,6 +69,7 @@ export class CardPreview extends Card {
         } else {
             this.setText(this._price, `${value} синапсов`);
         }
+        
     }
 
     private updateButton() {

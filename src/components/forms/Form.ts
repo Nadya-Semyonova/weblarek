@@ -27,9 +27,6 @@ export abstract class Form<T> extends Component<T> {
         this._valid = value;
         this.updateButtonState();
     }
-    get valid(): boolean {
-        return this._valid;
-    }
 
     set errors(value: string) {
         if (this._errors) {
@@ -47,7 +44,11 @@ export abstract class Form<T> extends Component<T> {
             });
         }
     }
-    // Абстрактные методы
-    protected abstract validate(): boolean;
-    protected abstract onInputChange(): void;
+    protected validate(): boolean { 
+        return this._valid;
+    }
+    
+    protected onInputChange(): void {
+        // Базовая реализация
+    }
 }

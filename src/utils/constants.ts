@@ -16,7 +16,7 @@ export const categoryMap = {
   'другое': 'card__category_other',
 };
 
+
 export const settings = {
 
 };
-

@@ -1,49 +1,71 @@
-import { IBuyer } from "../../types/index";
-import { TPayment } from "../../types/index";
-import { IValidationResult,IValidationErrors } from "../../types/index";
+import { IBuyer } from "../../types/index"; 
+import { TPayment } from "../../types/index"; 
+import { IValidationResult, IValidationErrors } from "../../types/index"; 
+import { IEvents } from "../base/Events"; // Добавляем импорт событий
 
-export class Buyer {
-  // Поля класса
-  private payment: TPayment | "" = "";
-  private address: string = "";
-  private phone: string = "";
-  private email: string = "";
+export class Buyer { 
+  // Поля класса 
+  private payment: TPayment | "" = ""; 
+  private address: string = ""; 
+  private phone: string = ""; 
+  private email: string = ""; 
 
-  // Методы
-  getBuyerData(): IBuyer | null {
-    if (!this.email && !this.phone) {
-      return null; 
-    }
+  constructor(private events: IEvents) {} // Добавляем events в конструктор
 
-    return {
-      payment: this.payment as TPayment,
-      address: this.address,
-      phone: this.phone,
-      email: this.email,
-    };
-  }
+  // ✅ ВСЕГДА возвращает текущие данные без ограничений
+  getBuyerData(): IBuyer { 
+    return { 
+      payment: this.payment as TPayment, 
+      address: this.address, 
+      phone: this.phone, 
+      email: this.email, 
+    }; 
+  } 
 
-  setBuyerData(buyerData: Partial<IBuyer>): void {
-    if (buyerData.payment !== undefined) {
-      this.payment = buyerData.payment;
-    }
-    if (buyerData.address !== undefined) {
-      this.address = buyerData.address;
-    }
-    if (buyerData.phone !== undefined) {
-      this.phone = buyerData.phone;
-    }
-    if (buyerData.email !== undefined) {
-      this.email = buyerData.email;
-    }
-  }
+  // ✅ Модель сама генерирует события при изменении данных
+  setBuyerData(buyerData: Partial<IBuyer>): void { 
+    let changed = false;
 
-  clearData(): void {
-    this.payment = "";
-    this.address = "";
-    this.phone = "";
-    this.email = "";
-  }
+    if (buyerData.payment !== undefined && this.payment !== buyerData.payment) { 
+      this.payment = buyerData.payment; 
+      changed = true;
+      this.events.emit('buyer:paymentChanged', { payment: this.payment });
+    } 
+    
+    if (buyerData.address !== undefined && this.address !== buyerData.address) { 
+      this.address = buyerData.address; 
+      changed = true;
+      this.events.emit('buyer:addressChanged', { address: this.address });
+    } 
+    
+    if (buyerData.phone !== undefined && this.phone !== buyerData.phone) { 
+      this.phone = buyerData.phone; 
+      changed = true;
+      this.events.emit('buyer:phoneChanged', { phone: this.phone });
+    } 
+    
+    if (buyerData.email !== undefined && this.email !== buyerData.email) { 
+      this.email = buyerData.email; 
+      changed = true;
+      this.events.emit('buyer:emailChanged', { email: this.email });
+    } 
+
+    // Генерируем общее событие о изменении данных
+    if (changed) {
+      this.events.emit('buyer:changed', this.getBuyerData());
+    }
+  } 
+
+  // ✅ Также генерируем событие при очистке данных
+  clearData(): void { 
+    this.payment = ""; 
+    this.address = ""; 
+    this.phone = ""; 
+    this.email = ""; 
+    
+    this.events.emit('buyer:cleared');
+    this.events.emit('buyer:changed', this.getBuyerData());
+  } 
 
 
 validate(): IValidationResult {
