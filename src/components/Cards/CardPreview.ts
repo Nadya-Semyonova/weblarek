@@ -12,6 +12,7 @@ export class CardPreview extends Card {
     _inCart: boolean = false;
     protected _image: HTMLImageElement;
     protected _category: HTMLElement;
+    
 
 
     constructor(container: HTMLElement, protected events: IEvents) {
@@ -71,6 +72,16 @@ export class CardPreview extends Card {
         }
         
     }
+
+    protected setDisabled(element: HTMLElement, state: boolean) { 
+        if (element) { 
+            if (state) { 
+                element.setAttribute('disabled', 'disabled'); 
+            } else { 
+                element.removeAttribute('disabled'); 
+            } 
+        } 
+    } 
 
     private updateButton() {
         if (this._productPrice === null) {

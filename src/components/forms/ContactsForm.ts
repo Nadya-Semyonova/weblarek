@@ -8,64 +8,32 @@ export class ContactsForm extends Form<IBuyer> {
 
     constructor(container: HTMLFormElement, events: IEvents) {
         super(container, events);
+         this._emailInput = container.querySelector('input[name="email"]') as HTMLInputElement;
+         this._phoneInput = container.querySelector('input[name="phone"]') as HTMLInputElement;
         
-        this._emailInput = container.querySelector('input[name="email"]') as HTMLInputElement;
-        this._phoneInput = container.querySelector('input[name="phone"]') as HTMLInputElement;
-        
-    
-        this._emailInput.addEventListener('input', () => {
-            this.events.emit('contacts:change', { 
+this._emailInput.addEventListener('input', () => {
+this.events.emit('contacts:change', { 
                 field: 'email', 
                 value: this._emailInput.value 
             });
         });
 
-        this._phoneInput.addEventListener('input', () => {
+this._phoneInput.addEventListener('input', () => {
             this.events.emit('contacts:change', { 
                 field: 'phone', 
                 value: this._phoneInput.value 
             });
         });
-
-       
-        this.container.addEventListener('submit', (event) => {
+this.container.addEventListener('submit', (event) => {
             event.preventDefault();
             this.events.emit('ContactsForm:submit');
         });
     }
-
-    
-    set email(value: string) {
+set email(value: string) {
         this._emailInput.value = value;
     }
-
-    set phone(value: string) {
+set phone(value: string) {
         this._phoneInput.value = value;
     }
 
-   
-    validate(): boolean {
-        return this._valid;
-    }
-
-    protected onInputChange(): void {
-        
-    }
-
-    
-    set valid(value: boolean) {
-        this._valid = value;
-        this.updateButtonState();
-        
-        // Визуальная индикация ошибок 
-        this._emailInput.classList.toggle('form__input-error', !value);
-        this._phoneInput.classList.toggle('form__input-error', !value);
-    }
-
-    set errors(value: string) {
-        if (this._errors) {
-            this._errors.textContent = value;
-            this._errors.style.display = value ? 'block' : 'none';
-        }
-    }
 }

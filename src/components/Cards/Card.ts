@@ -9,6 +9,7 @@ interface ICardData {
 export abstract class Card extends Component<ICardData> {
     protected _title: HTMLElement;
     protected _price: HTMLElement;
+   
 
     constructor(protected container: HTMLElement) {
         super(container);
@@ -16,6 +17,11 @@ export abstract class Card extends Component<ICardData> {
         this._price = this.container.querySelector('.card__price') as HTMLElement;
     }
     
+    protected setText(element: HTMLElement, value: string) {
+        if (element) {
+          element.textContent = value;
+        }
+    };
     set title(value: string) {
         this.setText(this._title, value);
     }

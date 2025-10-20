@@ -12,42 +12,17 @@ export class Cart {
 
   addToCart(product: IProduct): void {
     this.itemsArrayCart.push(product);
-    this.events.emit('cart:itemAdded', { product, items: this.itemsArrayCart });
-    this.events.emit('cart:changed', { 
-      items: this.itemsArrayCart,
-      totalPrice: this.getTotalPrice(),
-      itemsCount: this.getItemsCount()
-    });
-  }
+    this.events.emit('cart:changed')
+  };
 
   removeFromCart(productId: string): void {
-    const removedItem = this.itemsArrayCart.find(item => item.id === productId);
-    this.itemsArrayCart = this.itemsArrayCart.filter((item) => item.id !== productId);
-    
-    if (removedItem) {
-      this.events.emit('cart:itemRemoved', { 
-        productId, 
-        product: removedItem,
-        items: this.itemsArrayCart 
-      });
-      this.events.emit('cart:changed', { 
-        items: this.itemsArrayCart,
-        totalPrice: this.getTotalPrice(),
-        itemsCount: this.getItemsCount()
-      });
-    }
+    this.itemsArrayCart = this.itemsArrayCart.filter((item) => item.id !== productId); 
+    this.events.emit('cart:changed'); 
   }
 
   clearCart(): void {
-    const clearedItems = [...this.itemsArrayCart];
-    this.itemsArrayCart = [];
-    
-    this.events.emit('cart:cleared', { clearedItems });
-    this.events.emit('cart:changed', { 
-      items: this.itemsArrayCart,
-      totalPrice: this.getTotalPrice(),
-      itemsCount: this.getItemsCount()
-    });
+    this.itemsArrayCart = []; 
+    this.events.emit('cart:changed'); 
   }
 
   getTotalPrice(): number {

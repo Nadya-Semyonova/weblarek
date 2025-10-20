@@ -29,8 +29,8 @@ export class SuccessView extends Component<ISuccessView> {
     }
 
     set total(value: number) {
-        const text = `Списано ${value} синапсов`;
-        this.setText(this._description, text);
+        this._description.textContent = `Списано ${value} синапсов`;
+
     }
 
     protected setText(element: HTMLElement, value: string): void {

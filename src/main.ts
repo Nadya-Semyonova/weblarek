@@ -33,10 +33,7 @@ const larekApi = new WebLarekAPI(api);
 
 // Инициализация галереи и Header
 const gallery = new Gallery(ensureElement<HTMLElement>('.gallery'));
-let header: Header | null = null;
-document.addEventListener('DOMContentLoaded', () => {
-  header = new Header(events, ensureElement<HTMLElement>('.header__basket'));
-});
+const header = new Header(events, ensureElement<HTMLElement>('.header__basket'));
 const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 
 // Инициализация Modal и шаблонов форм/корзины/превью/успеха
@@ -61,10 +58,9 @@ const successView = new SuccessView(successElement, events);
 
 
 
-// Ждем полной загрузки DOM и только потом запрашиваем товары и рендерим
-document.addEventListener('DOMContentLoaded', () => {
-larekApi
-  .getProductList()
+// загрузка товаров
+
+larekApi.getProductList()
   .then((products) => {
     console.log("Получено товаров с сервера:", products.length);
     productsModel.setItems(products);
@@ -81,7 +77,6 @@ larekApi
         console.error('Ошибка отображения локального каталога:', fallbackErr);
       }
     });
-});
 
 // Обработчик события изменения каталога: рендерим карточки товаров
 events.on('catalog:changed', () => {
@@ -90,17 +85,16 @@ events.on('catalog:changed', () => {
     const cardElement = cloneTemplate<HTMLElement>(cardCatalogTemplate);
     const card = new CardCatalog(cardElement, events);
 
-    card.id = product.id;
-    card.title = product.title;
-    card.price = product.price;
-    card.image = CDN_URL + product.image;
-    card.category = product.category;
+    const productWithImage = {
+      ...product,
+      image: CDN_URL + product.image
+    }
 
-    return card.render();
+    return card.render(productWithImage);
   });
 
   gallery.render({ items: cardElements });
-});
+}); 
 
 
 
@@ -120,15 +114,13 @@ events.on('products:cardChanged', () => {
   const cardElement = cloneTemplate<HTMLElement>(cardPreviewTemplate);
   const card = new CardPreview(cardElement, events);
 
-  card.id = product.id;
-  card.title = product.title;
-  card.image = CDN_URL + product.image;
-  card.category = product.category;
-  card.description = product.description;
-  card.price = product.price;
-  card.inCart = cartModel.isInCart(product.id);
+  const productData = {
+    ...product,
+    image: CDN_URL + product.image,
+    inCart: cartModel.isInCart(product.id)
+  };
 
-  modal.open(card.element);
+  modal.open(card.render(productData));
 });
 
 // Добавить/удалить товар из корзины из превью карточки
@@ -150,37 +142,27 @@ events.on('card:close', () => {
 
 // Товары в корзине изменились — обновить счетчик и содержимое корзины
 events.on('cart:changed', () => {
-  const items = cartModel.getCartItems();
   const totalPrice = cartModel.getTotalPrice();
-  const quantity = cartModel.getItemsCount();
-  const isEmpty = quantity === 0;
-
-  const renderedCards = items.map((product, index) => {
+  
+  const renderedCards = cartModel.getCartItems().map((product, index) => {
     const cardEl = cloneTemplate<HTMLElement>(cardBasketTemplate);
     const card = new CardBasket(cardEl, events);
-    card.id = product.id;
-    card.title = product.title;
-    card.price = product.price !== null ? product.price : 0;
-    card.index = index + 1;
-    return card.element;
+    const productWithIndex = {
+      ...product,
+      index: index + 1
+    };
+    return card.render(productWithIndex);
   });
 
-  if (header) {
-    header.counter = quantity;
-  } else {
-    const counterEl = document.querySelector('.header__basket-counter') as HTMLElement | null;
-    if (counterEl) counterEl.textContent = String(quantity);
-  }
-
-  // Обновляем состояние корзины только при изменении товаров
-  basketView.items = renderedCards;
-  basketView.total = totalPrice;
-  basketView.buttonDisabled = isEmpty;
+  header.render({ counter: cartModel.getItemsCount() });
+  basketView.render({ items: renderedCards, total: totalPrice });
 });
+
+
 
 // При открытии корзины — просто показываем текущее содержимое
 events.on('basket:open', () => {
-  modal.open(basketView.element);
+  modal.open(basketView.render());
 });
 
 
@@ -191,7 +173,7 @@ events.on('basket:remove', (data: { id: string }) => {
 
 // Нажатие «Оформить» — перейти к форме оплаты
 events.on('basket:order', () => {
-  modal.open(paymentForm.element);
+  modal.open(paymentForm.render());
 });
 
 // Обработчики изменений данных формы оплаты
@@ -231,14 +213,14 @@ events.on('basket:order', () => {
       .filter(Boolean)
       .join(', ');
   
-  modal.open(paymentForm.element);
+  modal.open(paymentForm.render());
 });
 
 // Отправка формы оплаты - перейти к форме контактов
 events.on('paymentForm:submit', () => {
   const validation = buyerModel.validate();
   if (!validation.errors.payment && !validation.errors.address) {
-      modal.open(contactsForm.element);
+      modal.open(contactsForm.render());
   }
 });
 
@@ -281,7 +263,7 @@ events.on('ContactsForm:submit', () => {
        
            // Показываем окно успешного заказа с общей суммой
            successView.total = result.total;
-           modal.open(successView.element);
+           modal.open(successView.render());
            
            // Очищаем корзину и данные покупателя
            cartModel.clearCart();
