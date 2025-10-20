@@ -24,22 +24,22 @@ setBuyerData(buyerData: Partial<IBuyer>): void {
 
     if (buyerData.payment !== undefined && this.payment !== buyerData.payment) { 
       this.payment = buyerData.payment; 
-      this.events.emit('buyer:paymentChanged', { payment: this.payment });
+      this.events.emit('buyer:сhanged', { field:'payment' });
     } 
     
     if (buyerData.address !== undefined && this.address !== buyerData.address) { 
       this.address = buyerData.address; 
-      this.events.emit('buyer:addressChanged', { address: this.address });
+      this.events.emit('buyer:changed', { field:'address' });
     } 
     
     if (buyerData.phone !== undefined && this.phone !== buyerData.phone) { 
       this.phone = buyerData.phone; 
-      this.events.emit('buyer:phoneChanged', { phone: this.phone });
+      this.events.emit('buyer:changed', { field:'phone' });
     } 
     
     if (buyerData.email !== undefined && this.email !== buyerData.email) { 
       this.email = buyerData.email; 
-      this.events.emit('buyer:emailChanged', { email: this.email });
+      this.events.emit('buyer:сhanged', { field:'email' });
     } 
 
   } 

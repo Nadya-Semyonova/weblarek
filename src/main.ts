@@ -224,25 +224,30 @@ events.on('paymentForm:submit', () => {
   }
 });
 
-// Обработчики изменений данных формы контактов
-events.on('contacts:change', (data: { field: string; value: string }) => {
-  if (data.field === 'email') {
-    buyerModel.setBuyerData({ email: data.value });
-  } else if (data.field === 'phone') {
-    buyerModel.setBuyerData({ phone: data.value });
-  }
-});
-
-// Обновление валидации формы контактов при изменении данных покупателя
-events.on('buyer:changed', () => {
+// Обновление валидации формы оплаты при изменении данных покупателя
+events.on('buyer:changed', (data: { field: string }) => {
   const validation = buyerModel.validate();
-  
-  // Обновляем форму контактов (проверяем только email и phone)
-  const contactsValid = !validation.errors.email && !validation.errors.phone;
-  contactsForm.valid = contactsValid;
-  contactsForm.errors = [validation.errors.email, validation.errors.phone]
+  if (data.field === 'payment' || data.field === 'address') {
+    // Обновляем форму оплаты (проверяем только payment и address)
+    paymentForm.payment = buyerModel.getBuyerData().payment;
+    paymentForm.address = buyerModel.getBuyerData().address;
+    const paymentValid =
+      !validation.errors.payment && !validation.errors.address;
+    paymentForm.valid = paymentValid;
+    paymentForm.errors = [validation.errors.payment, validation.errors.address]
       .filter(Boolean)
       .join(', ');
+  }
+  if (data.field === 'phone' || data.field === 'email') {
+    // Обновляем форму контактов (проверяем только email и phone)
+    contactsForm.email = buyerModel.getBuyerData().email;
+    contactsForm.phone = buyerModel.getBuyerData().phone;
+    const contactsValid = !validation.errors.email && !validation.errors.phone;
+    contactsForm.valid = contactsValid;
+    contactsForm.errors = [validation.errors.email, validation.errors.phone]
+      .filter(Boolean)
+      .join(', ');
+  }
 });
 
 // Отправка формы контактов - завершить заказ

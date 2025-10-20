@@ -16,7 +16,7 @@ export abstract class Form<T> extends Component<T> {
             this.submitButton.disabled = !value; 
         } 
     }
-//   не работает кнопка
+
    set errors(value: string) {
         if (this._errors) {
             this._errors.textContent = value;
@@ -27,18 +27,11 @@ export abstract class Form<T> extends Component<T> {
         if (this.submitButton) { 
             this.submitButton.disabled = !this.valid; 
             console.log('Обновление состояния кнопки:', { 
-                valid: this.valid, 
+        
                 disabled: this.submitButton.disabled, 
                 button: this.submitButton 
             }); 
         } 
     } 
     
-// protected validate(): boolean { 
-//         return this.valid;
-//     }
-    
-//     protected onInputChange(): void {
-        
-//     }
 }
