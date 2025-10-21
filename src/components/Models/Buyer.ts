@@ -24,7 +24,7 @@ setBuyerData(buyerData: Partial<IBuyer>): void {
 
     if (buyerData.payment !== undefined && this.payment !== buyerData.payment) { 
       this.payment = buyerData.payment; 
-      this.events.emit('buyer:сhanged', { field:'payment' });
+      this.events.emit('buyer:changed', { field:'payment' });
     } 
     
     if (buyerData.address !== undefined && this.address !== buyerData.address) { 
@@ -39,7 +39,7 @@ setBuyerData(buyerData: Partial<IBuyer>): void {
     
     if (buyerData.email !== undefined && this.email !== buyerData.email) { 
       this.email = buyerData.email; 
-      this.events.emit('buyer:сhanged', { field:'email' });
+      this.events.emit('buyer:changed', { field:'email' });
     } 
 
   } 

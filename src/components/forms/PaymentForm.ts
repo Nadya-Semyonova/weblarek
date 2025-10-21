@@ -6,9 +6,11 @@ import { IEvents } from '../base/Events';
 export class PaymentForm extends Form<TPayment> {
     protected _paymentButtons: HTMLButtonElement[]; 
     protected _addressInput: HTMLInputElement; 
-     constructor(container: HTMLFormElement, events: IEvents) { 
+     
+    constructor(container: HTMLFormElement, events: IEvents) { 
         super(container, events); 
          this._paymentButtons = Array.from(container.querySelectorAll('.button_alt')); 
+        
         this._addressInput = container.querySelector('input[name="address"]') as HTMLInputElement; 
         this._paymentButtons.forEach(button => { 
             button.addEventListener('click', () => { 
@@ -17,7 +19,8 @@ export class PaymentForm extends Form<TPayment> {
                 }); 
             }); 
         }); 
- this._addressInput.addEventListener('input', () => { 
+ 
+        this._addressInput.addEventListener('input', () => { 
             this.events.emit('address:changed', { 
                 address: this._addressInput.value 
             }); 
@@ -28,13 +31,15 @@ export class PaymentForm extends Form<TPayment> {
             this.events.emit('paymentForm:submit'); 
         }); 
     } 
- set payment(value: 'card' | 'cash' | "") { 
+ 
+    set payment(value: 'card' | 'cash' | "") { 
         this._paymentButtons.forEach(button => { 
             const isActive = button.name === value;
             button.classList.toggle('button_alt-active', isActive); 
         }); 
     } 
-  set address(value: string) { 
+  
+    set address(value: string) { 
         this._addressInput.value = value; 
     } 
  

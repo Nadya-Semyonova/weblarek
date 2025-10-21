@@ -185,17 +185,6 @@ events.on('address:changed', (data: { address: string }) => {
   buyerModel.setBuyerData({ address: data.address });
 });
 
-// Обновление валидации формы оплаты при изменении данных покупателя
-events.on('buyer:changed', () => {
-  const validation = buyerModel.validate();
-  
-  // Обновляем форму оплаты (проверяем только payment и address)
-  const paymentValid = !validation.errors.payment && !validation.errors.address;
-  paymentForm.valid = paymentValid;
-  paymentForm.errors = [validation.errors.payment, validation.errors.address]
-      .filter(Boolean)
-      .join(', ');
-});
 
 // Нажатие «Оформить» в корзине — перейти к форме оплаты
 events.on('basket:order', () => {
@@ -221,6 +210,14 @@ events.on('paymentForm:submit', () => {
   const validation = buyerModel.validate();
   if (!validation.errors.payment && !validation.errors.address) {
       modal.open(contactsForm.render());
+  }
+});
+
+events.on('contacts:change', (data: { field: string; value: string }) => {
+  if (data.field === 'email') {
+    buyerModel.setBuyerData({ email: data.value });
+  } else if (data.field === 'phone') {
+    buyerModel.setBuyerData({ phone: data.value });
   }
 });
 
